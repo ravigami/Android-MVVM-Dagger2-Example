@@ -14,8 +14,6 @@ import retrofit2.http.GET;
 
 public interface Api {
 
-    String BASE_URL = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/";
-
     @GET("facts.json")
     Call<Country> getCountryFacts();
 }

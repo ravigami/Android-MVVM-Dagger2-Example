@@ -7,31 +7,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.bumptech.glide.Glide;
 import java.util.List;
 
 import com.uday.androidsample.R;
 import com.uday.androidsample.model.Facts;
+import android.widget.ImageView;
 
 public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapter.FactsViewHolder> {
 
     private List<Facts> facts;
     private LayoutInflater mInflater;
-
+    Context context;
     public static class FactsViewHolder extends RecyclerView.ViewHolder {
         LinearLayout moviesLayout;
         TextView movieTitle;
-
+        ImageView imageView;
 
 
         public FactsViewHolder(View v) {
             super(v);
             movieTitle = (itemView.findViewById(R.id.tvTitle));
-
+            imageView = (itemView.findViewById(R.id.imageView));
         }
     }
 
     public CountryFactsAdapter(List<Facts> facts, Context context) {
+        this.context = context;
         this.facts = facts;
         this.mInflater = LayoutInflater.from(context);
     }
@@ -48,7 +50,9 @@ public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapt
     @Override
     public void onBindViewHolder(FactsViewHolder holder, final int position) {
         holder.movieTitle.setText(facts.get(position).getTitle());
-
+        Glide.with(context)
+                .load(facts.get(position).getImageHref())
+                .into(holder.imageView);
     }
 
     @Override
