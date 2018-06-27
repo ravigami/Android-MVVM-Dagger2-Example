@@ -23,11 +23,12 @@ public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapt
         LinearLayout moviesLayout;
         TextView movieTitle;
         ImageView imageView;
-
+        TextView description;
 
         public FactsViewHolder(View v) {
             super(v);
             movieTitle = (itemView.findViewById(R.id.tvTitle));
+            description = (itemView.findViewById(R.id.tvDescription));
             imageView = (itemView.findViewById(R.id.imageView));
         }
     }
@@ -50,6 +51,7 @@ public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapt
     @Override
     public void onBindViewHolder(FactsViewHolder holder, final int position) {
         holder.movieTitle.setText(facts.get(position).getTitle());
+        holder.description.setText(facts.get(position).getDescription());
         Glide.with(context)
                 .load(facts.get(position).getImageHref())
                 .into(holder.imageView);
