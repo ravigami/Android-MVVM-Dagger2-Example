@@ -46,21 +46,21 @@ public class MainActivity extends AppCompatActivity {
         // set up the RecyclerView
         recyclerView = findViewById(R.id.rvFacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //calling the method to display the heroes
 
-      /*  FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
-        model.getHeroes().observe(this, new Observer<List<Facts>>() {
+       FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
+
+        model.getFacts().observe(this, new Observer<List<Facts>>() {
             @Override
             public void onChanged(@Nullable List<Facts> factsList) {
                 adapter = new CountryFactsAdapter(factsList, getApplicationContext());
                 recyclerView.setAdapter(adapter);
             }
-        });*/
-        getHeroes();
+        });
+       // getFacts();
     }
 
-    private void getHeroes() {
+    private void getFacts() {
       /*  Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()) //Here we are using the GsonConverterFactory to directly convert json data to object

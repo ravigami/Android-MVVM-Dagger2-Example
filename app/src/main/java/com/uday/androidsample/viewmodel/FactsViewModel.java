@@ -25,7 +25,7 @@ public class FactsViewModel extends ViewModel {
     private MutableLiveData<List<Facts>> factsList;
 
     //we will call this method to get the data
-    public LiveData<List<Facts>> getHeroes() {
+    public LiveData<List<Facts>> getFacts() {
         //if the list is null
         if (factsList == null) {
             factsList = new MutableLiveData<List<Facts>>();
