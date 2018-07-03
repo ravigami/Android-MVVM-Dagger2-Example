@@ -31,6 +31,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import javax.inject.Inject;
+import com.uday.androidsample.utils.MyDividerItemDecoration;
 
 public class MainActivity extends AppCompatActivity {
     @Inject Retrofit retrofit;
@@ -42,11 +43,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ((MyApplication) getApplication()).getNetComponent().inject(this);
-
-        // set up the RecyclerView
+;        // set up the RecyclerView
         recyclerView = findViewById(R.id.rvFacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
 
        FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
@@ -68,21 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         Api api = retrofit.create(Api.class);
 
-    /*    api.getCountryFacts()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<Country>() {
-                    @Override
-                    public void onSuccess(Country country) {
-                        List<Facts> facts =  Arrays.asList(country.getRows());
-                        recyclerView.setAdapter(new CountryFactsAdapter(facts, getApplicationContext()));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        // Network error
-                    }
-                });*/
         Call<Country> call = api.getCountryFacts();
 
         call.enqueue(new Callback<Country>() {
