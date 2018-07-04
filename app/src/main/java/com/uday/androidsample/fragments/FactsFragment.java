@@ -19,6 +19,7 @@ import java.util.List;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,10 +30,10 @@ import android.view.ViewGroup;
 import android.os.Bundle;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FactsFragment extends Fragment {
+public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     RecyclerView recyclerView;
     CountryFactsAdapter adapter;
-
+    SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,7 +41,37 @@ public class FactsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rvFacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new MyDividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL, 16));
+// SwipeRefreshLayout
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
 
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                mSwipeRefreshLayout.setRefreshing(true);
+
+                // Fetching data from server
+                loadDataToViewModel();
+            }
+        });
+
+        //getFacts();
+        return view;
+    }
+
+    private void loadDataToViewModel() {
+        // Showing refresh animation before making http call
+        mSwipeRefreshLayout.setRefreshing(true);
         FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
         model.getFacts().observe(this, new Observer<List<Facts>>() {
@@ -48,12 +79,21 @@ public class FactsFragment extends Fragment {
             public void onChanged(@Nullable List<Facts> factsList) {
                 adapter = new CountryFactsAdapter(factsList, getActivity().getApplicationContext());
                 recyclerView.setAdapter(adapter);
+                // Stopping swipe refresh
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        //getFacts();
-        return view;
     }
 
+    /**
+     * This method is called when swipe refresh is pulled down
+     */
+    @Override
+    public void onRefresh() {
+
+        // Fetching data from server
+        loadDataToViewModel();
+    }
     private void getFacts() {
       Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BASE_URL)
