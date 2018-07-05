@@ -5,14 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
-import java.util.List;
 
 import com.uday.androidsample.R;
+import com.uday.androidsample.diprovider.GlideApp;
 import com.uday.androidsample.model.Facts;
-import android.widget.ImageView;
+
+import java.util.List;
 
 public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapter.FactsViewHolder> {
 
@@ -52,9 +53,12 @@ public class CountryFactsAdapter  extends RecyclerView.Adapter<CountryFactsAdapt
     public void onBindViewHolder(FactsViewHolder holder, final int position) {
         holder.movieTitle.setText(facts.get(position).getTitle());
         holder.description.setText(facts.get(position).getDescription());
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(facts.get(position).getImageHref())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.error)
                 .into(holder.imageView);
+
     }
 
     @Override

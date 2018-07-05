@@ -5,8 +5,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.uday.androidsample.app.Constant;
+import com.uday.androidsample.app.MyApplication;
 import com.uday.androidsample.model.Country;
 import com.uday.androidsample.network.Api;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,10 +19,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FactsViewModel extends ViewModel {
 
+    @Inject
+    Retrofit retrofit;
     //this is the data that we will fetch asynchronously
     private MutableLiveData<Country> factsList;
 
-
+    FactsViewModel(){
+        MyApplication.getNetComponent().inject(this);
+    }
     //we will call this method to get the data
     public LiveData<Country> getFacts() {
         //if the list is null
@@ -35,10 +42,10 @@ public class FactsViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadFacts() {
-        Retrofit retrofit = new Retrofit.Builder()
+        /*Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                .build();*/
 
         Api api = retrofit.create(Api.class);
         Call<Country> call = api.getCountryFacts();
@@ -48,8 +55,6 @@ public class FactsViewModel extends ViewModel {
             @Override
             public void onResponse(Call<Country> call, Response<Country> response) {
 
-//                title = "tello";
-                //finally we are setting the list to our MutableLiveData
                 factsList.setValue(response.body());
 
             }

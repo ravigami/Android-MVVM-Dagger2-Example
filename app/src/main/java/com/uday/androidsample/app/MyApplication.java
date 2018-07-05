@@ -1,8 +1,9 @@
 package com.uday.androidsample.app;
 
 import android.app.Application;
-import com.uday.androidsample.diprovider.AppModule;
+
 import com.uday.androidsample.diprovider.ApiModule;
+import com.uday.androidsample.diprovider.AppModule;
 import com.uday.androidsample.network.ConnectivityReceiver;
 
 /**
@@ -11,7 +12,7 @@ import com.uday.androidsample.network.ConnectivityReceiver;
 
 public class MyApplication extends Application {
 
-    private ApiComponent mApiComponent;
+    private static ApiComponent mApiComponent;
     private static MyApplication mInstance;
 
 
@@ -32,7 +33,7 @@ public class MyApplication extends Application {
                 .build();
     }
 
-    public ApiComponent getNetComponent() {
+    public static ApiComponent getNetComponent() {
         return mApiComponent;
     }
 }
