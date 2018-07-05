@@ -1,5 +1,7 @@
 package com.uday.androidsample.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import com.uday.androidsample.network.ConnectivityReceiver;
 import com.uday.androidsample.utils.MyDividerItemDecoration;
 import com.uday.androidsample.viewmodel.FactsViewModel;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import android.arch.lifecycle.Observer;
@@ -39,6 +42,12 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     RecyclerView recyclerView;
     CountryFactsAdapter adapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    CountrySelectedListener mCallback;
+
+    // Container Activity must implement this interface
+    public interface CountrySelectedListener {
+        public void onCountrySelected(String Country);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,17 +81,41 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return view;
     }
 
+
+
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            Activity a = null;
+
+            if (context instanceof Activity){
+                a=(Activity) context;
+            }
+            // This makes sure that the container activity has implemented
+            // the callback interface. If not, it throws an exception
+            try {
+                mCallback = (CountrySelectedListener) a;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(a.toString()
+                        + " must implement OnHeadlineSelectedListener");
+            }
+        }
+
+
+
     private void loadDataToViewModel() {
         // Showing refresh animation before making http call
         if(checkConnection()) {
             mSwipeRefreshLayout.setRefreshing(true);
-            FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
+           final FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
-            model.getFacts().observe(this, new Observer<List<Facts>>() {
+            model.getFacts().observe(this, new Observer<Country>() {
                 @Override
-                public void onChanged(@Nullable List<Facts> factsList) {
-                    adapter = new CountryFactsAdapter(factsList, getActivity().getApplicationContext());
+                public void onChanged(@Nullable Country country) {
+                    adapter = new CountryFactsAdapter(Arrays.asList(country.getRows()), getActivity().getApplicationContext());
                     recyclerView.setAdapter(adapter);
+
+                    mCallback.onCountrySelected(country.getTitle());
                     // Stopping swipe refresh
                     mSwipeRefreshLayout.setRefreshing(false);
                 }

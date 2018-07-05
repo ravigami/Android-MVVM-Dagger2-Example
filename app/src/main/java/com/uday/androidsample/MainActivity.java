@@ -2,6 +2,7 @@ package com.uday.androidsample;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Bundle;
@@ -34,18 +35,24 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import javax.inject.Inject;
+import android.support.v7.widget.Toolbar;
 import com.uday.androidsample.utils.MyDividerItemDecoration;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FactsFragment.CountrySelectedListener{
     @Inject Retrofit retrofit;
     RecyclerView recyclerView;
     CountryFactsAdapter adapter;
-
+    ActionBar actionBar;
+    FactsViewModel usersViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ((MyApplication) getApplication()).getNetComponent().inject(this);
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+
+
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
 
@@ -69,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
         });*/
        // getFacts();
     }
+    public void onCountrySelected(String title) {
 
+        actionBar.setTitle(title);
+    }
 
 
 }
