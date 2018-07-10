@@ -22,30 +22,26 @@ public class FactsViewModel extends ViewModel {
     @Inject
     Retrofit retrofit;
     //this is the data that we will fetch asynchronously
-    private MutableLiveData<Country> factsList;
+    private MutableLiveData<Country> factsObj;
 
     FactsViewModel(){
         MyApplication.getNetComponent().inject(this);
     }
     //we will call this method to get the data
     public LiveData<Country> getFacts() {
-        //if the list is null
-        if (factsList == null) {
-            factsList = new MutableLiveData<Country>();
+        //if the Object is null
+        if (factsObj == null) {
+            factsObj = new MutableLiveData<Country>();
             //we will load it asynchronously from server in this method
             loadFacts();
         }
 
-        //finally we will return the list
-        return factsList;
+        //finally we will return the Object
+        return factsObj;
     }
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadFacts() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constant.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
         Api api = retrofit.create(Api.class);
         Call<Country> call = api.getCountryFacts();
@@ -55,7 +51,7 @@ public class FactsViewModel extends ViewModel {
             @Override
             public void onResponse(Call<Country> call, Response<Country> response) {
 
-                factsList.setValue(response.body());
+                factsObj.setValue(response.body());
 
             }
 

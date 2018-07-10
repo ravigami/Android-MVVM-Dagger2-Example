@@ -42,7 +42,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
     @Singleton
     Gson provideGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
         return gsonBuilder.create();
     }
 
@@ -61,10 +60,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl(mBaseUrl)
                 .client(okHttpClient)
-                .addCallAdapterFactory(rxJava2CallAdapterFactory)
+                .addCallAdapterFactory(rxJava2CallAdapterFactory)  // Todo item
                 .build();
     }
 
+    // Todo item
     @Singleton
     @Provides
     RxJava2CallAdapterFactory providesRxJava2CallAdapterFactory() {
