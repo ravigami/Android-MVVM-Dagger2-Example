@@ -28,16 +28,32 @@ import com.uday.androidsample.viewmodel.FactsViewModel;
 
 import java.util.Arrays;
 
-public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,  ConnectivityReceiver.ConnectivityReceiverListener{
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ConnectivityReceiver.ConnectivityReceiverListener {
     RecyclerView recyclerView;
     CountryFactsAdapter adapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
     CountrySelectedListener mCallback;
+    @BindView(R.id.rvFacts)
+    RecyclerView rvFacts;
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeContainer;
+    Unbinder unbinder;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
     // Container Activity must implement this interface
     public interface CountrySelectedListener {
         public void onCountrySelected(String Country);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,42 +78,41 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             @Override
             public void run() {
 
-               // Fetching data from server
+                // Fetching data from server
                 loadDataToViewModel();
             }
         });
 
         //getFacts();
+        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity a = null;
 
-        @Override
-        public void onAttach(Context context) {
-            super.onAttach(context);
-            Activity a = null;
-
-            if (context instanceof Activity){
-                a=(Activity) context;
-            }
-            // This makes sure that the container activity has implemented
-            // the callback interface. If not, it throws an exception
-            try {
-                mCallback = (CountrySelectedListener) a;
-            } catch (ClassCastException e) {
-                throw new ClassCastException(a.toString()
-                        + " must implement OnHeadlineSelectedListener");
-            }
+        if (context instanceof Activity) {
+            a = (Activity) context;
         }
-
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (CountrySelectedListener) a;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(a.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
 
 
     private void loadDataToViewModel() {
         // Showing refresh animation before making http call
-        if(checkConnection()) {
+        if (checkConnection()) {
             mSwipeRefreshLayout.setRefreshing(true);
-           final FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
+            final FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
             model.getFacts().observe(this, new Observer<Country>() {
                 @Override

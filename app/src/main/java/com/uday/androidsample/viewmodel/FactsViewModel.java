@@ -42,10 +42,10 @@ public class FactsViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadFacts() {
-        /*Retrofit retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();*/
+                .build();
 
         Api api = retrofit.create(Api.class);
         Call<Country> call = api.getCountryFacts();
