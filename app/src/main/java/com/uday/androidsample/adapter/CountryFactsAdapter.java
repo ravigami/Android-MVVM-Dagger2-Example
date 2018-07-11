@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.uday.androidsample.R;
+import com.uday.androidsample.app.Constant;
 import com.uday.androidsample.model.Facts;
 
 import java.util.List;
@@ -60,12 +62,18 @@ public class CountryFactsAdapter extends RecyclerView.Adapter<CountryFactsAdapte
 
     @Override
     public void onBindViewHolder(FactsViewHolder holder, final int position) {
-        holder.movieTitle.setText(facts.get(position).getTitle());
-        holder.description.setText(facts.get(position).getDescription());
-        Glide.with(context)
+        String title = facts.get(position).getTitle() == null || facts.get(position).getTitle().equals("") ? Constant.NO_TITLE : facts.get(position).getTitle();
+        String description = facts.get(position).getDescription() == null || facts.get(position).getDescription().equals("") ? Constant.NO_DESC : facts.get(position).getDescription();
+        holder.movieTitle.setText(title);
+        holder.description.setText(description);
+        Glide
+                .with(context)
                 .load(facts.get(position).getImageHref())
-                .into(holder.imageView);
-
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .fitCenter())
+                        .into(holder.imageView);
 
     }
 
