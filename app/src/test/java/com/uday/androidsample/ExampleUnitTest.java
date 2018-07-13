@@ -1,6 +1,8 @@
 package com.uday.androidsample;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,8 +12,25 @@ import static org.junit.Assert.assertEquals;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+
+
+
+    @Before
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void isConnectedToInternet() {
+
+
+
+    }
+
+
 }

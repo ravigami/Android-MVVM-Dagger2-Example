@@ -1,8 +1,5 @@
 package com.uday.androidsample.utils;
 
-/**
- * Created by ravi on 18/01/18.
- */
 
 import android.content.Context;
 import android.content.res.Resources;

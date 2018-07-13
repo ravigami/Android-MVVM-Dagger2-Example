@@ -61,7 +61,7 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         recyclerView = view.findViewById(R.id.rvFacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new MyDividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL, 16));
-// SwipeRefreshLayout
+        // SwipeRefreshLayout
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
@@ -182,4 +182,7 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onNetworkConnectionChanged(boolean isConnected) {
         showSnack(isConnected);
     }
+
+
+
 }

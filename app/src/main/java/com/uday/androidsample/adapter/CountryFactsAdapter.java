@@ -72,7 +72,8 @@ public class CountryFactsAdapter extends RecyclerView.Adapter<CountryFactsAdapte
                 .apply(new RequestOptions()
                         .placeholder(R.drawable.placeholder)
                         .error(R.drawable.placeholder)
-                        .fitCenter())
+                        .fitCenter()
+                        .centerCrop())
                         .into(holder.imageView);
 
     }

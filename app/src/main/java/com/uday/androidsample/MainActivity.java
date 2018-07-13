@@ -15,9 +15,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements FactsFragment.CountrySelectedListener {
-    RecyclerView recyclerView;
-    CountryFactsAdapter adapter;
-    ActionBar actionBar;
+    private RecyclerView recyclerView;
+    private CountryFactsAdapter adapter;
+    private ActionBar actionBar;
     @BindView(R.id.fragmentContainer)
     FrameLayout fragmentContainer;
 
@@ -27,19 +27,13 @@ public class MainActivity extends AppCompatActivity implements FactsFragment.Cou
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         actionBar = getSupportActionBar();
-
-
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
-
         if (fragment == null) {
             fragment = new FactsFragment();
-            ;
             fm.beginTransaction()
                     .add(R.id.fragmentContainer, fragment)
                     .commit();
-
-
         }
 
     }
