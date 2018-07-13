@@ -33,21 +33,15 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ConnectivityReceiver.ConnectivityReceiverListener {
-    RecyclerView recyclerView;
-    CountryFactsAdapter adapter;
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    CountrySelectedListener mCallback;
+    private CountryFactsAdapter adapter;
+    private CountrySelectedListener mCallback;
     @BindView(R.id.rvFacts)
     RecyclerView rvFacts;
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeContainer;
-    Unbinder unbinder;
+    private Unbinder unbinder;
+    private FactsViewModel model;
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
 
     // Container Activity must implement this interface
     public interface CountrySelectedListener {
@@ -58,13 +52,14 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_factlist, container, false);
-        recyclerView = view.findViewById(R.id.rvFacts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new MyDividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL, 16));
+        rvFacts = view.findViewById(R.id.rvFacts);
+        model = ViewModelProviders.of(this).get(FactsViewModel.class);
+        rvFacts.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvFacts.addItemDecoration(new MyDividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL, 16));
         // SwipeRefreshLayout
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeContainer.setOnRefreshListener(this);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
@@ -73,17 +68,15 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeContainer.post(new Runnable() {
 
             @Override
             public void run() {
-
-                // Fetching data from server
+               // Fetching data from server
                 loadDataToViewModel();
             }
         });
 
-        //getFacts();
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -110,25 +103,57 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private void loadDataToViewModel() {
         // Showing refresh animation before making http call
-        if (checkConnection()) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            final FactsViewModel model = ViewModelProviders.of(this).get(FactsViewModel.class);
 
+        if(!checkConnection() && model.checkforOfflineData())
+        {
+            model.getData().observe(this, new Observer<Country>() {
+                @Override
+                public void onChanged(@Nullable Country country) {
+                    updateAdapter(country);
+                }
+            });
+        }else {
+            swipeContainer.setRefreshing(true);
             model.getFacts().observe(this, new Observer<Country>() {
                 @Override
                 public void onChanged(@Nullable Country country) {
-                    adapter = new CountryFactsAdapter(Arrays.asList(country.getRows()), getActivity().getApplicationContext());
-                    recyclerView.setAdapter(adapter);
-
-                    mCallback.onCountrySelected(country.getTitle());
-                    // Stopping swipe refresh
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    updateAdapter(country);
                 }
             });
-        } else {
-            showSnack(false);
         }
+
     }
+
+    private void updateAdapter(@Nullable Country country) {
+        adapter = new CountryFactsAdapter(Arrays.asList(country.getRows()), getActivity().getApplicationContext());
+        rvFacts.setAdapter(adapter);
+
+        mCallback.onCountrySelected(country.getTitle());
+        // Stopping swipe refresh
+        swipeContainer.setRefreshing(false);
+    }
+
+    private void refreshFacts() {
+        // Showing refresh animation before making http call
+        if(!checkConnection() && model.checkforOfflineData())
+        {
+            model.getData().observe(this, new Observer<Country>() {
+                @Override
+                public void onChanged(@Nullable Country country) {
+                    updateAdapter(country);
+                }
+            });
+        }else {
+            swipeContainer.setRefreshing(true);
+            model.refreshFacts().observe(this, new Observer<Country>() {
+                @Override
+                public void onChanged(@Nullable Country country) {
+                    updateAdapter(country);
+                }
+            });
+        }
+      }
+
 
     /**
      * This method is called when swipe refresh is pulled down
@@ -172,6 +197,10 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         super.onResume();
         // register connection status listener
         MyApplication.getInstance().setConnectivityListener(this);
+        if (!checkConnection()) {
+            showSnack(false);
+        }
+
     }
 
     /**
@@ -183,6 +212,10 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         showSnack(isConnected);
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
 }

@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.uday.androidsample.app.Constant;
 import com.uday.androidsample.app.MyApplication;
 import com.uday.androidsample.model.Country;
 import com.uday.androidsample.network.Api;
@@ -15,7 +14,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FactsViewModel extends ViewModel {
 
@@ -40,6 +38,22 @@ public class FactsViewModel extends ViewModel {
         return factsObj;
     }
 
+    public LiveData<Country> refreshFacts() {
+        loadFacts();
+        return factsObj;
+    }
+
+    public boolean  checkforOfflineData(){
+        if (factsObj != null) {
+          return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LiveData<Country>  getData(){
+        return factsObj;
+    }
     //This method is using Retrofit to get the JSON data from URL
     private void loadFacts() {
 
