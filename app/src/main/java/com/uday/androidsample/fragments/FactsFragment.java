@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.uday.androidsample.R;
@@ -37,6 +38,8 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private CountrySelectedListener mCallback;
     @BindView(R.id.rvFacts)
     RecyclerView rvFacts;
+    @BindView(R.id.imgnointernet)
+    ImageView imgNoInternet;
     @BindView(R.id.swipe_container)
     SwipeRefreshLayout swipeContainer;
     private Unbinder unbinder;
@@ -72,7 +75,7 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void run() {
-               // Fetching data from server
+                // Fetching data from server
                 loadDataToViewModel();
             }
         });
@@ -104,26 +107,45 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private void loadDataToViewModel() {
         // Showing refresh animation before making http call
 
-        if(!checkConnection() && model.checkforOfflineData())
+        if(!checkConnection() && model.isDataAvailableViewModel())
         {
+            showRecyclerView();
+            showSnack(false);
             model.getData().observe(this, new Observer<Country>() {
                 @Override
                 public void onChanged(@Nullable Country country) {
                     updateAdapter(country);
                 }
             });
-        }else {
-            swipeContainer.setRefreshing(true);
-            model.getFacts().observe(this, new Observer<Country>() {
-                @Override
-                public void onChanged(@Nullable Country country) {
-                    updateAdapter(country);
-                }
-            });
+        } else if(!checkConnection() && !model.isDataAvailableViewModel()){
+            showNoConnection();
+        }
+        else {
+            getUpdatedData();
         }
 
     }
 
+    private void getUpdatedData() {
+        showRecyclerView();
+        swipeContainer.setRefreshing(true);
+        model.getFacts().observe(this, new Observer<Country>() {
+            @Override
+            public void onChanged(@Nullable Country country) {
+                updateAdapter(country);
+            }
+        });
+    }
+
+    private void showNoConnection() {
+        imgNoInternet.setVisibility(View.VISIBLE);
+        rvFacts.setVisibility(View.GONE);
+        swipeContainer.setRefreshing(false);
+    }
+    private void showRecyclerView() {
+        imgNoInternet.setVisibility(View.GONE);
+        rvFacts.setVisibility(View.VISIBLE);
+    }
     private void updateAdapter(@Nullable Country country) {
         adapter = new CountryFactsAdapter(Arrays.asList(country.getRows()), getActivity().getApplicationContext());
         rvFacts.setAdapter(adapter);
@@ -132,28 +154,6 @@ public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         // Stopping swipe refresh
         swipeContainer.setRefreshing(false);
     }
-
-    private void refreshFacts() {
-        // Showing refresh animation before making http call
-        if(!checkConnection() && model.checkforOfflineData())
-        {
-            model.getData().observe(this, new Observer<Country>() {
-                @Override
-                public void onChanged(@Nullable Country country) {
-                    updateAdapter(country);
-                }
-            });
-        }else {
-            swipeContainer.setRefreshing(true);
-            model.refreshFacts().observe(this, new Observer<Country>() {
-                @Override
-                public void onChanged(@Nullable Country country) {
-                    updateAdapter(country);
-                }
-            });
-        }
-      }
-
 
     /**
      * This method is called when swipe refresh is pulled down

@@ -38,14 +38,9 @@ public class FactsViewModel extends ViewModel {
         return factsObj;
     }
 
-    public LiveData<Country> refreshFacts() {
-        loadFacts();
-        return factsObj;
-    }
-
-    public boolean  checkforOfflineData(){
+    public boolean  isDataAvailableViewModel(){
         if (factsObj != null) {
-          return true;
+            return true;
         } else {
             return false;
         }
@@ -75,4 +70,5 @@ public class FactsViewModel extends ViewModel {
             }
         });
     }
+
 }
