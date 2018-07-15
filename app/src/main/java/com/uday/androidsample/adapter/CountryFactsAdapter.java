@@ -19,6 +19,10 @@ import java.util.List;
 
 import butterknife.BindView;
 
+/**
+ * Created by Uday on 27/06/2018.
+ */
+
 public class CountryFactsAdapter extends RecyclerView.Adapter<CountryFactsAdapter.FactsViewHolder> {
 
     @BindView(R.id.tvTitle)

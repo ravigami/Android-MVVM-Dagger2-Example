@@ -33,6 +33,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * Created by Uday on 27/06/2018.
+ */
+
 public class FactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ConnectivityReceiver.ConnectivityReceiverListener {
     private CountryFactsAdapter adapter;
     private CountrySelectedListener mCallback;

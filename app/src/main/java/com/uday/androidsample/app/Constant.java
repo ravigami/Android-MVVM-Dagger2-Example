@@ -1,5 +1,9 @@
 package com.uday.androidsample.app;
 
+/**
+ * Created by Uday on 27/06/2018.
+ */
+
 public class Constant {
     public static final String BASE_URL = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/";
     public static final String INTERNET_CONNECTED = "Good! Connected to Internet";

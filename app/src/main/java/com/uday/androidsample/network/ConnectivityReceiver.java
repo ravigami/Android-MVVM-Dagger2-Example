@@ -8,6 +8,10 @@ import android.net.NetworkInfo;
 
 import com.uday.androidsample.app.MyApplication;
 
+/**
+ * Created by Uday on 27/06/2018.
+ */
+
 public class ConnectivityReceiver extends BroadcastReceiver {
 
     public static ConnectivityReceiverListener connectivityReceiverListener;
